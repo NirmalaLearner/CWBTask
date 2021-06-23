@@ -1,0 +1,94 @@
+package packageName;
+
+import java.io.FileInputStream;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+
+public class SearchTest {
+	public static WebDriver driver;
+	
+	//Note that I have not implemented testNG or BDD concepts here as there was no mention in the assignment
+	
+	public static void main(String[] args) {
+	
+	System.setProperty("webdriver.chrome.driver","src//test//resources//Drivers//chromedriver.exe");
+	driver = new ChromeDriver();
+	driver.get("https://codility-frontend-prod.s3.amazonaws.com/media/task_static/qa_csharp_search/862b0faa506b8487c25a3384cfde8af4/static/attachments/reference_page.html");
+	driver.manage().window().maximize();
+	}
+	
+	
+	public void test_inputBtnBox() {
+		WebElement inputBox = driver.findElement(By.id("search-input"));
+		Boolean inputBx = inputBox.isDisplayed();
+		Assert.assertTrue(inputBx);
+		WebElement searchBtn = driver.findElement(By.id("search-button"));
+		Boolean searchBn = searchBtn.isDisplayed();
+		Assert.assertTrue(searchBn);	
+		driver.close();
+	}
+	
+	public void test_emptySearch() {
+		WebElement inputBox = driver.findElement(By.id("search-input"));
+		inputBox.clear();
+		WebElement searchBtn = driver.findElement(By.id("search-button"));
+		searchBtn.click();
+		WebElement queryResult = driver.findElement(By.id("error-empty-query"));
+		Boolean resutlTxt = queryResult.isDisplayed();
+		Assert.assertTrue(resutlTxt);
+		String queryResultTxt = queryResult.getText();
+		Assert.assertEquals("Provide some query", queryResultTxt);	
+		driver.close();
+	}
+	
+	public void test_islaSearch() {
+		WebElement inputBox = driver.findElement(By.id("search-input"));
+		inputBox.clear();
+		inputBox.sendKeys("isla");
+		WebElement searchBtn = driver.findElement(By.id("search-button"));
+		searchBtn.click();
+		WebElement queryResult = driver.findElement(By.id("search-results"));
+		Boolean resutls = queryResult.isDisplayed();
+		Assert.assertTrue(resutls);
+		List<WebElement> queryResults = driver.findElements(By.xpath("//ul[@id='search-results']//li"));
+		Boolean listcheck = queryResults.isEmpty();
+		Assert.assertFalse(listcheck);
+		driver.close();
+	}
+	
+	public void test_castleSearch() {
+		WebElement inputBox = driver.findElement(By.id("search-input"));
+		inputBox.clear();
+		inputBox.sendKeys("castle");
+		WebElement searchBtn = driver.findElement(By.id("search-button"));
+		searchBtn.click();
+		WebElement queryResult = driver.findElement(By.id("error-no-results"));
+		Boolean resutls = queryResult.isDisplayed();
+		Assert.assertTrue(resutls);
+		Assert.assertEquals("No results", queryResult.getText());
+		driver.close();
+	}
+	
+	public void test_portSearch() {
+		WebElement inputBox = driver.findElement(By.id("search-input"));
+		inputBox.clear();
+		inputBox.sendKeys("port");
+		WebElement searchBtn = driver.findElement(By.id("search-button"));
+		searchBtn.click();
+		WebElement queryResult = driver.findElement(By.id("search-results"));
+		Boolean resutls = queryResult.isDisplayed();
+		Assert.assertTrue(resutls);
+		List<WebElement> queryResults = driver.findElements(By.xpath("//ul[@id='search-results']//li"));
+		int resultSize = queryResults.size();
+		Assert.assertEquals(1, resultSize);
+		String resultTxt = queryResults.get(0).getText();
+		Assert.assertEquals("Port Royal", resultTxt);
+		driver.close();
+	}
+
+}
